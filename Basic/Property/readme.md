@@ -164,3 +164,28 @@ Gender 프로퍼티는 private으로 선언되어 있기 때문에
     p1.Gender = "Female";   // 오류
     Console.WriteLine(p1.Gender);       // 오류
 ```
+
+
+### 인터페이스 프로퍼티
+인터페이스에서도 프로퍼티를 구현할 수 있다. C# 8.0 이상 버전에서만 가능하다.
+
+```C#
+    public interface IPerson
+    {
+        public int Age { get; set; }
+    }
+```
+
+또한 인터페이스에서 정의한 프로퍼티는 파생 클래스나 인터페이스에서 모두 구현해야 된다.
+
+```C#
+    public interface IPerson
+    {
+        public int Age { get; set; }
+    }
+
+    class DerivedClass : IPerson
+    {
+        public int Age { get; set; }
+    }
+```

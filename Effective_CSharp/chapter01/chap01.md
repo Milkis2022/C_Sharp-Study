@@ -36,5 +36,58 @@ var HighestSellingProduct = someObject.Dosomething(parameter);
 float에서 double로의 변환과 같이 확대 변환은 항상 안전하게 수행된다. 반면 long에서 int로의 변환과 같이 축소 변환은 정밀도에서 손실이 발생한다.
 
 ```C#
+        public static float GetMagicNumber()
+        {
+            return 3.14f;
+        }
+
+        public static void Main(string[] args) 
+        {
+            var f = GetMagicNumber();
+            var total = 100 * f / 6;
+            Console.WriteLine($"Declared Type: {total.GetType().Name}, Value:{total}");
+        }
+```
+
+위 코드에서 total은 무슨 타입일까? total의 타입은 GetMagicNumber() 메서드의 반환 타입에 의해 결정될 것이다.
+컴파일러는 변수 f의 타입을 GetMagicNumber() 메서드의 반환 타입으로 f의 타입을 결정한다. 
+```C#
+        public static double GetMagicNumber()
+        {
+            return 3.14f;
+        }
+
+        public static void Main(string[] args) 
+        {
+            var f = GetMagicNumber();
+            var total = 100 * f / 6;
+            Console.WriteLine($"Declared Type: {total.GetType().Name}, Value:{total}");
+        }
+```
+[결과값]
+```bash
+Declared Type: Single, Value:52.33334
+Declared Type: Double, Value:52.3333350817362
+```
+
+total 계산 시에 사용한 상수는 모두 리터럴이므로 컴파일러가 이 상수들을 f와 동일한 타입으로 변환한 후 계산하게 되는데 이런 이유로 결괏값에 차이가 생긴다. 이는 언어 차원의 문제는 아니다. C# 컴파일러 입장에서는 개발자의 요청을 정확히 수행했다고 볼 수 있다. 개발자가 var를 사용하여 타입 추론을 컴파일러에게 위임한 경우, 컴파일러는 할당문 오른쪽의 내용을 기반으로 타입을 결정하기 때문이다. 이러한 이유로 원시 타입과 var를 함께 사용할 때는 항상 주의해야한다.
+앞의 코드만 들여다 봤을 때는 GetMagicNumber() 메서드의 반환 타입을 정확히 추론하기 어렵고, 내장된 형변환 기능이 함께 동작하기 때문에 그 결과를 예상하기 힘들다.
+
+total의 타입을 명시적으로 선언하면 이 문제를 해결할 수 있긴하다.
+```C#
+    var f = GetMagicNumber();
+    double total = 100 * f / 6;
+    Console.WriteLine($"Declared Type: {total.GetType().Name}, Value:{total}");
+```
+
+위 코드에서 total의 타입은 double이다.하지만 GetMagicNumber() 메서드에서 정수 타입을 반환하면 잘림이 발생할 수 있다.
+여기에서 문제는 위 코드만 보고선 GetMagicNumber()의 반환 타입을 알 수 없으므로 어떤 반환이 수행될지 짐작할 수 없다는 점이다.
+
+이처럼 var를 사용하면 코드의 유지보수가 더 어려운 경우도 발생할 수 있다. 컴파일러는 일관된 방식으로 타입 추론을 수행하겠지만 개발자 입장에서는 내부적으로 이뤄지는 타입 추론 과정과 암시적인 형변환 과정을 이해하기 어렵기 때문이다. 이러한 이유로 지연변수에 대해 var를 사용하는 것이 적절하지 않다고 말하곤 하지만 이는 너무 가혹하다.
+
+때로는 변수의 타입을 컴파일러에게 추론하게 맡기는 편이 더 낫기 떄문이다.다음 코드를 살펴보자
+
+```C#
+
 
 ```
